@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あなたのタイプ診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@300;400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  background: #fff0f4;
+  color: #3a1a28;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px;
+  background: linear-gradient(150deg, #ffffff 0%, #ffe0ea 55%, #ffb8ce 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-circle1 {
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: rgba(255,150,180,0.18);
+  top: -100px; right: -120px;
+  pointer-events: none;
+}
+.hero-circle2 {
+  position: absolute;
+  width: 350px; height: 350px;
+  border-radius: 50%;
+  background: rgba(255,180,200,0.15);
+  bottom: -80px; left: -80px;
+  pointer-events: none;
+}
+
+.hero-content { position: relative; z-index: 1; }
+
+.hero-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 16px;
+  letter-spacing: 0.2em;
+  color: #c0547a;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.hero-title {
+  font-size: clamp(36px, 7vw, 80px);
+  font-weight: 900;
+  line-height: 1.15;
+  color: #3a1a28;
+  margin-bottom: 28px;
+}
+
+.hero-title .sub {
+  display: block;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 0.45em;
+  color: #b07090;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: #7a4050;
+  line-height: 2;
+  max-width: 420px;
+  margin: 0 auto 44px;
+  font-weight: 300;
+}
+
+.btn-start {
+  display: inline-block;
+  padding: 18px 64px;
+  background: #c0547a;
+  color: white;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  border: none;
+  border-radius: 60px;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(192,84,122,0.35);
+  transition: all 0.2s;
+}
+.btn-start:hover {
+  background: #a8406a;
+  transform: translateY(-3px);
+  box-shadow: 0 14px 40px rgba(192,84,122,0.45);
+}
+
+/* ===== QUIZ ===== */
+#quiz {
+  display: none;
+  min-height: 100vh;
+  padding: 52px 24px 80px;
+  background: linear-gradient(180deg, #fff0f4 0%, #ffffff 50%);
+}
+
+.quiz-inner { max-width: 600px; margin: 0 auto; }
+
+.progress-wrap {
+  height: 6px;
+  background: #ffd0de;
+  border-radius: 99px;
+  margin-bottom: 48px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f9a8c0, #c0547a);
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.step-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #c0547a;
+  letter-spacing: 0.12em;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.question-text {
+  font-size: clamp(20px, 4.5vw, 28px);
+  font-weight: 700;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  min-height: 80px;
+  color: #3a1a28;
+}
+
+.options { display: flex; flex-direction: column; gap: 12px; }
+
+.opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  background: white;
+  border: 1.5px solid #f4c0cc;
+  border-radius: 14px;
+  cursor: pointer;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 14px;
+  line-height: 1.75;
+  color: #3a1a28;
+  text-align: left;
+  transition: all 0.18s;
+  box-shadow: 0 2px 8px rgba(192,84,122,0.07);
+}
+.opt:hover {
+  border-color: #c0547a;
+  background: #fff0f4;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(192,84,122,0.15);
+}
+
+.opt-letter {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: #ffe0ea;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #c0547a;
+  transition: all 0.18s;
+}
+.opt:hover .opt-letter {
+  background: #c0547a;
+  color: white;
+}
+
+/* ===== RESULT ===== */
+#result {
+  display: none;
+  min-height: 100vh;
+  padding: 60px 24px 80px;
+  background: linear-gradient(160deg, #fff0f4 0%, #ffffff 55%);
+}
+
+.result-inner { max-width: 640px; margin: 0 auto; }
+
+.result-eyebrow {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 15px;
+  color: #c0547a;
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.result-title {
+  font-size: clamp(28px, 5vw, 52px);
+  font-weight: 900;
+  line-height: 1.2;
+  color: #3a1a28;
+  margin-bottom: 18px;
+}
+
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 22px;
+  background: #c0547a;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border-radius: 60px;
+  margin-bottom: 28px;
+}
+.result-badge .num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  color: #ffd0de;
+}
+
+.result-card {
+  background: white;
+  border: 1.5px solid #f4c0cc;
+  border-radius: 18px;
+  padding: 30px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(192,84,122,0.08);
+}
+.result-card h3 {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: #c0547a;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.result-card p {
+  font-size: 15px;
+  line-height: 2;
+  color: #3a1a28;
+  font-weight: 300;
+  white-space: pre-line;
+}
+
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+.tag {
+  padding: 6px 16px;
+  background: #fff0f4;
+  border: 1px solid #f4c0cc;
+  border-radius: 99px;
+  font-size: 12px;
+  color: #c0547a;
+  letter-spacing: 0.05em;
+}
+
+/* ===== BUTTONS ===== */
+.cta-area {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.btn-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 18px 24px;
+  background: #6dcfcf;
+  color: white;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border-radius: 14px;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(109,207,207,0.35);
+  transition: all 0.2s;
+}
+.btn-line:hover {
+  background: #50bebe;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(109,207,207,0.45);
+}
+.btn-line svg {
+  width: 22px; height: 22px;
+  fill: white;
+  flex-shrink: 0;
+}
+
+.btn-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  border: 1.5px solid #c0547a;
+  background: transparent;
+  font-family: 'Zen Kaku Gothic New', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #c0547a;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-retry:hover {
+  background: #c0547a;
+  color: white;
+}
+
+/* ===== ANIM ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.anim { opacity: 0; }
+.anim.go { animation: fadeUp 0.5s forwards; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-circle1"></div>
+  <div class="hero-circle2"></div>
+  <div class="hero-content">
+    <span class="hero-eyebrow">Wellness Type Diagnosis</span>
+    <h1 class="hero-title">
+      <span class="sub">あなたのカラダと心の</span>
+      タイプ診断
+    </h1>
+    <p class="hero-desc">
+      いくつかの質問に答えるだけで、<br>
+      あなたの健康・美容タイプと<br>
+      おすすめのケア方法がわかります。
+    </p>
+    <button class="btn-start" onclick="startQuiz()">診断をはじめる →</button>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="quiz-inner">
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <span class="step-label" id="stepLabel">Question 1</span>
+    <div class="question-text" id="questionText"></div>
+    <div class="options" id="optionsWrap"></div>
+  </div>
+</section>
+
+<!-- RESULT -->
+<section id="result">
+  <div class="result-inner">
+    <span class="result-eyebrow">Your Wellness Type</span>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-badge" id="resultBadge"></div>
+    <div class="result-card">
+      <h3>ABOUT YOUR TYPE</h3>
+      <p id="resultDesc"></p>
+    </div>
+    <div class="result-card">
+      <h3>RECOMMENDED CARE</h3>
+      <p id="resultAdvice"></p>
+      <div class="result-tags" id="resultTags"></div>
+    </div>
+    <div class="cta-area">
+      <a class="btn-line" href="https://line.me/R/ti/p/@454urjul" target="_blank">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314"/>
+        </svg>
+        LINEで無料相談する
+      </a>
+      <button class="btn-retry" onclick="resetQuiz()">もう一度診断する</button>
+    </div>
+  </div>
+</section>
+
+<script>
+const questions = [
+  {
+    id: 1,
+    text: "今、一番気になっているお悩みはどれですか？",
+    options: [
+      { label: "A", text: "子育てに関する悩みがある", next: 2 },
+      { label: "B", text: "自分の健康不調が気になる", next: 3 },
+      { label: "C", text: "美容についての悩みがある", next: 4 },
+      { label: "D", text: "仕事のストレスや悩みがある", next: 14 },
+    ]
+  },
+  {
+    id: 2,
+    text: "お子さまのどんなことが気になっていますか？",
+    options: [
+      { label: "A", text: "子供の体調や免疫力が心配", next: 8 },
+      { label: "B", text: "子供のイライラや睡眠が気になる", next: 9 },
+      { label: "C", text: "自分も一緒に健康になりたい", next: 5 },
+    ]
+  },
+  {
+    id: 3,
+    text: "眠れていますか？体調はどうですか？",
+    options: [
+      { label: "A", text: "眠れていない、体調が悪い", next: 6 },
+      { label: "B", text: "まあまあ眠れているけど疲れが取れない", next: 6 },
+      { label: "C", text: "自分の体調は良いけど、家族の体調が気になる", next: 8 },
+    ]
+  },
+  {
+    id: 4,
+    text: "肌のトラブルを改善したいですか？",
+    options: [
+      { label: "A", text: "自然由来の化粧水や美容液を知りたい", next: 5 },
+      { label: "B", text: "品質保証されたエッセンシャルオイルを使った化粧水・美容液を探している", next: 13 },
+      { label: "C", text: "植物性ミネラルや核酸ドリンクが肌の構成成分を整えてるって知ったら、もう少し詳しく知りたい？", next: 11 },
+    ]
+  },
+  {
+    id: 5,
+    text: "どんなケアや改善方法に興味がありますか？",
+    options: [
+      { label: "A", text: "できるだけ自然な方法でケアしたい", next: 6 },
+      { label: "B", text: "なるべく病院に行かず、薬を使わないでケアしたい", next: 9 },
+      { label: "C", text: "子供を病院に連れて行くのが大変、気軽に相談してみたい", next: 9 },
+    ]
+  },
+  {
+    id: 6,
+    text: "自分のケアや改善が続いていない…何が心配ですか？",
+    options: [
+      { label: "A", text: "ミネラル不足が何か気になる", next: 11 },
+      { label: "B", text: "できるだけ自然なケアが知りたい", next: 10 },
+      { label: "C", text: "自然の中でゆっくり過ごしてリフレッシュしたい", next: 15 },
+    ]
+  },
+  {
+    id: 7,
+    text: "どんな香りや方法に興味がありますか？",
+    options: [
+      { label: "A", text: "ヘッドマッサージで心地よい香りを知りたい", next: 13 },
+      { label: "B", text: "エッセンシャルオイルを効果的に試してみたい", next: 13 },
+      { label: "C", text: "お家で簡単にできるアロマケアを取り入れてみたい", next: 13 },
+    ]
+  },
+  {
+    id: 8,
+    text: "子供に合ったケア方法を知りたいですか？",
+    options: [
+      { label: "A", text: "はい、子供向けのケアを無料で知りたい", next: "r_anxious" },
+      { label: "B", text: "家族の体調を良くしたい、自分も一緒に学びたい", next: "r_ganbari" },
+      { label: "C", text: "何から情報収集したら良いか、わからない", next: "r_knowledge" },
+    ]
+  },
+  {
+    id: 9,
+    text: "総合病院の小児科看護師に相談しますか？",
+    options: [
+      { label: "A", text: "相談しなくていい、ミネラルや核酸を試してみたい", next: 12 },
+      { label: "B", text: "小児科看護師と一緒に子供に合ったケアを取り入れたい", next: 10 },
+      { label: "C", text: "はい！専門の医療従事者に相談したい", next: "r_anxious" },
+    ]
+  },
+  {
+    id: 10,
+    text: "お家で簡単にできるアロマケアとは何か知りたい",
+    options: [
+      { label: "A", text: "色々なエッセンシャルオイルの話を聞いてみたい", next: 13 },
+      { label: "B", text: "アロマについて購入して使い方を学びたい", next: 13 },
+    ]
+  },
+  {
+    id: 11,
+    text: "植物性ミネラルや核酸という言葉を聞いたことがない",
+    options: [
+      { label: "A", text: "フルボ酸入りの70種類の植物性ミネラルって何？", next: "r_knowledge" },
+      { label: "B", text: "核酸って何がいいの？基礎美容液も何かいいものがあれば知りたい", next: "r_beauty" },
+    ]
+  },
+  {
+    id: 12,
+    text: "植物性ミネラルや核酸についてもっと知りたいですか？",
+    options: [
+      { label: "A", text: "知りたい！Zoomで相談したい", next: "r_anxious" },
+      { label: "B", text: "少し気になる", next: "r_ganbari" },
+    ]
+  },
+  {
+    id: 13,
+    text: "アロマについて少し興味あるが、何処から手をつけたらいいかもわからない",
+    options: [
+      { label: "A", text: "アロマやエッセンシャルオイルについて聞いてみたい", next: "r_natural" },
+      { label: "B", text: "アロマタッチケアについて知りたい", next: "r_selfcare" },
+      { label: "C", text: "心身ともに癒されるアロマタッチケアを受けたい", next: "r_stress_mineral" },
+    ]
+  },
+  {
+    id: 14,
+    text: "仕事でどんなことを感じていますか？",
+    options: [
+      { label: "A", text: "仕事からのストレスをずっと感じている", next: 15 },
+      { label: "B", text: "仕事以外の時間が充実していない、リフレッシュできていない", next: 15 },
+    ]
+  },
+  {
+    id: 15,
+    text: "ストレスケアとして、どんなアプローチに興味がありますか？",
+    options: [
+      { label: "A", text: "食べ物やミネラル系、体の内側から整えたい", next: "r_stress_mineral" },
+      { label: "B", text: "アロマや香りでリラックス、気持ちを癒すことに興味がある", next: "r_stress_aroma" },
+      { label: "C", text: "美容ケアで外見を整えて自信をアップしたい", next: "r_stress_beauty" },
+    ]
+  },
+];
+
+const results = {
+  r_anxious: {
+    icon: "🌿", title: "不安走りタイプ", group: 1,
+    desc: "【特徴】心配性・情報収集が止まらない・決断が苦手\n\n情報は多くあるのに、何を信じていいかわからない…そんな迷いを抱えているあなた。子育て・健康・美容など、心配ごとが尽きない分、とても誠実で真剣に向き合っている方です。",
+    advice: "まずは信頼できる専門家に気軽に相談することから始めてみましょう。小児科看護師とのZoom相談や、LINEでの情報収集がおすすめです。",
+    tags: ["Zoom相談", "専門家サポート", "子育てケア", "ミネラル講座"]
+  },
+  r_ganbari: {
+    icon: "💪", title: "がんばりすぎタイプ", group: 1,
+    desc: "【特徴】他人優先・休むことへの罪悪感・自分のことは後回し\n\n「自分でなんとかしようとしてしまう」あなた。頑張り屋さんで責任感が強く、周りのために一生懸命です。でもその分、自分のことは後回しになりがち。",
+    advice: "自然なケアを取り入れながら、自分を労わる時間を作りましょう。アロマケアや植物性ミネラルで体の内側からサポートするのがおすすめです。",
+    tags: ["アロマケア", "植物性ミネラル", "セルフケア", "看護師LINE"]
+  },
+  r_knowledge: {
+    icon: "📚", title: "知識不足タイプ", group: 2,
+    desc: "【特徴】何から始めればいいかわからない・判断基準がない・興味はある\n\n「そもそも何？判断基準を知らない」という段階にいるあなた。情報過多の時代に、正しい知識の入口を見つけられていないだけ。基礎から学べばきっと変わります。",
+    advice: "まずはミネラル講座やエッセンシャルオイルの基礎を学ぶところから。知識が増えると、自分に合ったケアが自然と見えてきます。",
+    tags: ["ミネラル講座", "基礎知識", "70種類の植物性ミネラル", "核酸"]
+  },
+  r_beauty: {
+    icon: "✨", title: "美容迷子タイプ", group: 2,
+    desc: "【特徴】美意識は高い・選択肢が多すぎて迷う・本物を求めている\n\n「情報は多いのに、何を信じて何を選べばいいかわからない」そんな状態のあなた。美容への関心は高いのに、本当に自分に合うものに出会えていないのかもしれません。",
+    advice: "品質の保証されたエッセンシャルオイルや植物性ミネラルから試してみましょう。核酸について専門家から話を聞くと、選択の基準が明確になります。",
+    tags: ["エッセンシャルオイル", "核酸講座", "美容ケア", "植物性ミネラル"]
+  },
+  r_natural: {
+    icon: "🌸", title: "自然派ケアタイプ", group: 3,
+    desc: "【特徴】薬や添加物が苦手・体に優しいものを選びたい・こだわり派\n\n「できるだけ自然に、薬に頼らずに」そんな思いを大切にしているあなた。体に優しい選択をしたいという意識が高く、本物のケアを求めています。",
+    advice: "アロマやエッセンシャルオイルを活用した自然なケアがぴったりです。薬剤師さんからエッセンシャルオイルについて詳しく聞いてみましょう。",
+    tags: ["アロマケア", "エッセンシャルオイル", "薬剤師相談", "自然派"]
+  },
+  r_selfcare: {
+    icon: "💆", title: "自分後回しタイプ", group: 3,
+    desc: "【特徴】子ども・家族最優先・慢性的な疲れ・弱音を吐けない\n\n「子ども優先で自分の体調はスルー」そんなあなたへ。疲労・だるさ・倦怠感が慢性化していても、病院行きじゃないと思っているかも。",
+    advice: "アロマタッチケアで体と心を整えることから始めましょう。どんなアロマオイル講座があるか知るだけでも、自分を大切にする第一歩になります。",
+    tags: ["アロマタッチケア", "セルフケア", "慢性疲労", "アロマ講座"]
+  },
+  r_stress_mineral: {
+    icon: "🌿", title: "インナーケアで整えたいタイプ", group: 3,
+    desc: "【特徴】体の疲れが抜けない・集中力が続かない・根本から変えたい\n\n仕事のストレスが積み重なり、体の内側からじわじわと疲弊しているあなた。まず栄養・ミネラルで根本から整えることが大切です。",
+    advice: "植物性ミネラルや核酸ドリンクで体の内側を整えることから始めましょう。体が整うと、心の余裕も自然と生まれてきます。",
+    tags: ["植物性ミネラル", "核酸ドリンク", "インナーケア", "ミネラル講座"]
+  },
+  r_stress_aroma: {
+    icon: "🌸", title: "香りでリセットしたいタイプ", group: 3,
+    desc: "【特徴】気持ちの切り替えが苦手・感情が溜まりやすい・癒しを求めている\n\n仕事のストレスを「気持ち」の部分から解放したいあなた。香りには自律神経を整える力があり、日常の小さなリラックスが大きな変化につながります。",
+    advice: "アロマタッチケアやエッセンシャルオイルを日常に取り入れてみましょう。好きな香りを見つけるだけで、毎日のリセット習慣が楽しくなります。",
+    tags: ["アロマタッチケア", "エッセンシャルオイル", "自律神経", "リラックス習慣"]
+  },
+  r_stress_beauty: {
+    icon: "✨", title: "自分磨きでリフレッシュタイプ", group: 3,
+    desc: "【特徴】外見が整うと気持ちも上がる・自己投資への意欲がある・変わりたい気持ちが強い\n\n外見を整えることで内側の自信や気力を取り戻したいあなた。美容ケアはただの「見た目」ではなく、自己肯定感を育てる大切な時間です。",
+    advice: "自然由来のスキンケアやエッセンシャルオイル配合の美容液から始めてみましょう。自分を大切にする時間が、仕事のストレスに負けない心を作ります。",
+    tags: ["自然派スキンケア", "エッセンシャルオイル美容", "セルフケア", "自己肯定感"]
+  },
+};
+
+function startQuiz() {
+  document.getElementById('hero').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  renderQuestion(1, 0);
+}
+
+function renderQuestion(id, step) {
+  const q = questions.find(q => q.id === id);
+  if (!q) return;
+
+  const pct = Math.round((step / 5) * 90);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stepLabel').textContent = 'Question ' + (step + 1);
+  document.getElementById('questionText').textContent = q.text;
+
+  const wrap = document.getElementById('optionsWrap');
+  wrap.innerHTML = '';
+  q.options.forEach(function(opt) {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = '<div class="opt-letter">' + opt.label + '</div><div>' + opt.text + '</div>';
+    btn.onclick = function() { choose(opt.next, step + 1); };
+    wrap.appendChild(btn);
+  });
+}
+
+function choose(next, step) {
+  if (typeof next === 'string') {
+    showResult(next);
+  } else {
+    renderQuestion(next, step);
+  }
+}
+
+function showResult(key) {
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('quiz').style.display = 'none';
+
+  const data = results[key];
+  document.getElementById('resultTitle').textContent = data.icon + ' ' + data.title;
+  document.getElementById('resultBadge').innerHTML = 'グループ <span class="num">' + data.group + '</span>';
+  // 特徴行をピンク太字で表示
+  var descParts = data.desc.split('\n\n');
+  var featLine = descParts[0].replace('【特徴】', '');
+  var bodyText = descParts[1] || '';
+  document.getElementById('resultDesc').innerHTML =
+    '<span style="display:block;color:#c0547a;font-weight:700;font-size:13px;letter-spacing:0.1em;margin-bottom:10px;">✦ ' + featLine + '</span>' + bodyText;
+  document.getElementById('resultAdvice').textContent = data.advice;
+  document.getElementById('resultTags').innerHTML = data.tags.map(function(t) {
+    return '<span class="tag">' + t + '</span>';
+  }).join('');
+
+  document.getElementById('result').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function resetQuiz() {
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('hero').style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
